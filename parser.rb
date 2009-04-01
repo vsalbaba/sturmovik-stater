@@ -114,6 +114,7 @@ class PilotMissionLog
       "Alive"
     else "Dead"
     end
+  end
   
   def bullet_accuracy
     @hit_bullets.to_f / @fire_bullets
