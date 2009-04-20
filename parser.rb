@@ -49,6 +49,7 @@ class PilotMissionLog
                 :mia_count,
                 :left_count,
                 :hit_the_silk_count,
+                :in_flight_count,
                 :sorties,
                 :emergency_land_count,
                 :captured_count
@@ -80,7 +81,7 @@ class PilotMissionLog
     @hit_roskets                 = pilot_stats[24][15..-1].to_i
     @fire_bombs                  = pilot_stats[25][14..-1].to_i
     @hit_bombs                   = pilot_stats[26][13..-1].to_i
-    @land_count = @kia_count = @mia_count = @left_count = @hit_the_silk_count = @emergency_land_count = @captured_count = 0
+    @land_count = @kia_count = @mia_count = @left_count = @hit_the_silk_count = @emergency_land_count = @captured_count = @in_flight_count = 0
  
     case @last_state
     when "Landed at Airfield":
@@ -97,6 +98,8 @@ class PilotMissionLog
       @captured_count = 1
     when "Emergency Landed"
       @emergency_land_count = 1
+    when "In Flight":
+      @in_flight_count = 1
     end
     @sorties = 1
     self
@@ -110,24 +113,28 @@ class PilotMissionLog
       "Alive"
     when "Captured":
       "Alive"
-    when "Emergency Landed"
+    when "Emergency Landed":
+      "Alive"
+    when "In Flight":
       "Alive"
     else "Dead"
     end
   end
   
   def bullet_accuracy
-    @hit_bullets.to_f / @fire_bullets
+    return 0 if @fire_bullets == 0
+    ((@hit_bullets.to_f / @fire_bullets)*100).to_i
   end
   
   def survived_count
-    @captured_count + @land_count + @emergency_land_count + @hit_the_silk_count
+    @captured_count + @land_count + @emergency_land_count + @hit_the_silk_count + @in_flight_count
   end
   
   def survivability
-    survived_count.to_f / @sorties
-  end 
-  
+    return 0 if @sorties == 0
+    ((survived_count.to_f / @sorties)*100).to_i
+  end
+    
   def +(e)
     r = PilotMissionLog.new
     r.name                        = e.name
@@ -163,6 +170,7 @@ class PilotMissionLog
     r.sorties                     = @sorties + e.sorties
     r.emergency_land_count        = @emergency_land_count + e.emergency_land_count
     r.captured_count              = @captured_count + e.captured_count
+    r.in_flight_count             = @in_flight_count + e.in_flight_count
     r
   end
 end
@@ -185,7 +193,7 @@ File.open(ARGV[0], 'r') do |file|
      stats.slice!(0..(stats.index("===== eventlog.lst =====\n")-1))
      mission = stats.slice!(0..stats.index("============ eof ==============\n"))
      mission[-1].rstrip!
-    @missions << MissionLog.new.parse(mission)
+    @missions << MissionLog.new.parse(mission).sort_by{|pilot| pilot.score}.reverse
   end
 end
 
@@ -193,7 +201,7 @@ end
 @missions.flatten.group_by(&:name).each_value do |value|
   @overall << value.inject {|sum, n| sum + n}
 end
-
+@overall = @overall.sort_by{|pilot| pilot.score}.reverse
 engine = Haml::Engine.new(File.read("template.html.haml"))
 
 File.open("output.html", "w") do |file|

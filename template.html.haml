@@ -9,39 +9,42 @@
   %tr
     %td Preziti
     %td Pristani + Nouzove pristani + Vyskoceni padakem + Zajeti
+  %tr
+    %td %
+    %td (Zasahy do pozemnich cilu + Zasahy do vzdusnych cilu) / Vystreleno naboju
 
 %table
   %tr
     %th Pilot
-    %th Score
-    %th Sestrelu
-    %th Pozemni Cile
+    %th Skóre
+    %th Sestřelů
+    %th Pozemní cíle
     %th AAA a tanky
     %th Stav
-    %th Vystreleno naboju
-    %th Zasahy vzduscnych cilu
+    %th Vystřeleno náboju
+    %th Zasahy vzdusnych cilu
     %th Zasahy pozemnich cilu
     %th Presnost strelby
-    %th Vzletu
-    %th Pristani
-    %th Preziti
+    %th Vzletů
+    %th Přistání
+    %th Přežil
     %th %
   - @overall.each do |pilot|
     %tr
       %td= pilot.name
-      %td= pilot.score
-      %td= pilot.enemy_aircraft_kill
-      %td= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
-      %td= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
+      %td{:align => "right"}= pilot.score
+      %td{:align => "right"}= pilot.enemy_aircraft_kill
+      %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
+      %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
       %td= pilot.last_state
-      %td= pilot.fire_bullets
-      %td= pilot.hit_air_bullets
-      %td= (pilot.hit_bullets - pilot.hit_air_bullets)
-      %td=(pilot.bullet_accuracy*100).to_i.to_s + '%'
-      %td= pilot.sorties
-      %td= pilot.land_count
-      %td= pilot.survived_count
-      %td=(pilot.survivability*100).to_i.to_s + '%'
+      %td{:align => "right"}= pilot.fire_bullets
+      %td{:align => "right"}= pilot.hit_air_bullets
+      %td{:align => "right"}= (pilot.hit_bullets - pilot.hit_air_bullets)
+      %td{:align => "right"}= pilot.bullet_accuracy.to_s + '%'
+      %td{:align => "right"}= pilot.sorties
+      %td{:align => "right"}= pilot.land_count
+      %td{:align => "right"}= pilot.survived_count
+      %td{:align => "right"}= pilot.survivability.to_s + '%'
 %img{ :src => "bf109karik.png"}
 %h2 Podrobne
 - @missions.reverse.each_with_index do |mission, index|
@@ -56,17 +59,17 @@
       %th Pozemni Cile
       %th AAA a tanky
       %th Vystreleno naboju
-      %th Zasahy do vzdusnych cilu
-      %th Z toho do pozemnich cilu
+      %th Zasahy vzdusnych cilu
+      %th Zasahy pozemnich cilu
       %th Stav
     - mission.each do |pilot|
       %tr
         %td= pilot.name
-        %td= pilot.score
-        %td= pilot.enemy_aircraft_kill
-        %td= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
-        %td= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
-        %td= pilot.fire_bullets
-        %td= pilot.hit_air_bullets
-        %td= pilot.hit_bullets - pilot.hit_air_bullets
+        %td{:align => "right"}= pilot.score
+        %td{:align => "right"}= pilot.enemy_aircraft_kill
+        %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
+        %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
+        %td{:align => "right"}= pilot.fire_bullets
+        %td{:align => "right"}= pilot.hit_air_bullets
+        %td{:align => "right"}= pilot.hit_bullets - pilot.hit_air_bullets
         %td= pilot.last_state
