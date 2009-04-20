@@ -1,0 +1,7 @@
+== Il2 Stater ==
+
+Velmi jednoduchy parser statistik z Il2 Sturmovik 1946
+diky nejasnostem v logech ani nemusi davat presne vysledky.
+Parsuje soubor NGen.log
+pouziti
+ruby parser.rb <lokace NGen.log>
