@@ -52,7 +52,9 @@ class PilotMissionLog
                 :in_flight_count,
                 :sorties,
                 :emergency_land_count,
-                :captured_count
+                :captured_count,
+                :alive_streak,
+                :kill_streak
   
   def parse(pilot_stats)
     @name                        = pilot_stats[1][7..-1].strip
@@ -102,6 +104,15 @@ class PilotMissionLog
       @in_flight_count = 1
     end
     @sorties = 1
+    case dead_or_alive
+    when "Dead":
+      @alive_streak = 0
+      @kill_streak = 0
+    when "Alive":
+      @kill_streak ||= 0
+      @alive_streak = 1
+      @kill_streak += @enemy_aircraft_kill
+    end
     self
   end
   
@@ -171,6 +182,15 @@ class PilotMissionLog
     r.emergency_land_count        = @emergency_land_count + e.emergency_land_count
     r.captured_count              = @captured_count + e.captured_count
     r.in_flight_count             = @in_flight_count + e.in_flight_count
+    
+    case e.dead_or_alive
+    when "Dead":
+      r.alive_streak = 0
+      r.kill_streak = 0
+    when "Alive":
+      r.alive_streak = @alive_streak + e.alive_streak
+      r.kill_streak = @kill_streak + e.kill_streak
+    end
     r
   end
 end
@@ -201,6 +221,7 @@ end
 @missions.flatten.group_by(&:name).each_value do |value|
   @overall << value.inject {|sum, n| sum + n}
 end
+@missions.reverse!
 @overall = @overall.sort_by{|pilot| pilot.score}.reverse
 engine = Haml::Engine.new(File.read("template.html.haml"))
 

@@ -28,7 +28,10 @@
     %th Vzletů
     %th Přistání
     %th Přežil
-    %th %
+    %th % Přežil
+    %th Přežil v řadě
+    %th Sestřelů v řadě
+    %th
   - @overall.each do |pilot|
     %tr
       %td= pilot.name
@@ -45,12 +48,16 @@
       %td{:align => "right"}= pilot.land_count
       %td{:align => "right"}= pilot.survived_count
       %td{:align => "right"}= pilot.survivability.to_s + '%'
+      %td{:align => "right"}= pilot.alive_streak
+      %td{:align => "right"}= pilot.kill_streak
+      %td
+        -if pilot.kill_streak >= 5
+          %img{:src => "spade.jpg"}
 %img{ :src => "bf109karik.png"}
 %h2 Podrobne
-- @missions.reverse.each_with_index do |mission, index|
+- @missions.each_with_index do |mission, index|
   %h3 
-    Mise cislo 
-    =@missions.size - index
+    ="Mise ##{@missions.size - index}"
   %table
     %tr
       %th Pilot
