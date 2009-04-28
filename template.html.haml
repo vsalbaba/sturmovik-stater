@@ -28,14 +28,14 @@
     %tr
       %td
         -if pilot.alive_streak >= 10
-          %img{:src => "heart.jpg", :alt => "srdcove_eso"}
+          %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
         -elsif pilot.alive_streak >= 5
-          %img{:src => "kary.jpg", :alt => "karove_eso"}
+          %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
       %td
         -if pilot.kill_streak >= 10
-          %img{:src => "spade.jpg", :alt => "pikove_eso"}
+          %img{:src => "graphics/spade.jpg", :alt => "pikove_eso"}
         -elsif pilot.kill_streak >= 5
-          %img{:src => "krize.jpg", :alt => "krizove_eso"}
+          %img{:src => "graphics/krize.jpg", :alt => "krizove_eso"}
       %td= pilot.name
       %td{:align => "right"}= pilot.score
       %td{:align => "right"}= pilot.enemy_aircraft_kill
@@ -65,22 +65,22 @@
     %td (Zasahy do pozemnich cilu + Zasahy do vzdusnych cilu) / Vystreleno naboju
   %tr
     %td
-      %img{:src => "krize.jpg"}
+      %img{:src => "graphics/krize.jpg"}
     %td 5 a více sestřelů v řadě
   %tr
     %td
-      %img{:src => "spade.jpg"}
+      %img{:src => "graphics/spade.jpg"}
     %td 10 a více sestřelů v řadě
   %tr
     %td
-      %img{:src => "kary.jpg"}
+      %img{:src => "graphics/kary.jpg"}
     %td 5 a více vzletů v řadě
   %tr
     %td 
-      %img{:src => "heart.jpg"}
+      %img{:src => "graphics/heart.jpg"}
     %td 10 a více vzletů v řadě
 
-%img{ :src => "bf109karik.png"}
+%img{ :src => "graphics/bf109karik.png"}
 %h2 Podrobne
 - @missions.each_with_index do |mission, index|
   %h3 
