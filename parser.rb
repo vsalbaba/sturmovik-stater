@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'haml'
+require 'chronic'
 module Enumerable
   def group_by
     assoc = Hash.new
@@ -56,64 +57,65 @@ class PilotMissionLog
                 :alive_streak,
                 :kill_streak
   
-  def parse(pilot_stats)
-    @name                        = pilot_stats[1][7..-1].strip
-    @score                       = pilot_stats[2][8..-1].to_i
-    @last_state                  = pilot_stats[3][8..-1].strip
-    @enemy_aircraft_kill         = pilot_stats[4][22..-1].to_i
-    @enemy_static_aircraft_kill  = pilot_stats[5][29..-1].to_i
-    @enemy_tank_kill             = pilot_stats[6][18..-1].to_i
-    @enemy_car_kill              = pilot_stats[7][17..-1].to_i
-    @enemy_artillery_kill        = pilot_stats[8][23..-1].to_i
-    @enemy_AAA_kill              = pilot_stats[9][17..-1].to_i
-    @enemy_wagon_kill            = pilot_stats[10][19..-1].to_i
-    @enemy_ship_kill             = pilot_stats[11][18..-1].to_i
-    @friend_aircraft_kill        = pilot_stats[12][23..-1].to_i
-    @friend_static_aircraft_kill = pilot_stats[13][30..-1].to_i
-    @friend_tank_kill            = pilot_stats[14][19..-1].to_i
-    @friend_car_kill             = pilot_stats[15][18..-1].to_i
-    @friend_artillery_kill       = pilot_stats[16][24..-1].to_i
-    @friend_AAA_kill             = pilot_stats[17][18..-1].to_i
-    @friend_wagon_kill           = pilot_stats[18][20..-1].to_i
-    @friend_ship_kill            = pilot_stats[19][19..-1].to_i
-    @fire_bullets                = pilot_stats[20][16..-1].to_i
-    @hit_bullets                 = pilot_stats[21][15..-1].to_i
-    @hit_air_bullets             = pilot_stats[22][18..-1].to_i
-    @fire_roskets                = pilot_stats[23][16..-1].to_i
-    @hit_roskets                 = pilot_stats[24][15..-1].to_i
-    @fire_bombs                  = pilot_stats[25][14..-1].to_i
-    @hit_bombs                   = pilot_stats[26][13..-1].to_i
-    @land_count = @kia_count = @mia_count = @left_count = @hit_the_silk_count = @emergency_land_count = @captured_count = @in_flight_count = 0
+  def self.parse(pilot_stats)
+    mission = self.new
+    mission.name                        = pilot_stats[1][7..-1].strip
+    mission.score                       = pilot_stats[2][8..-1].to_i
+    mission.last_state                  = pilot_stats[3][8..-1].strip
+    mission.enemy_aircraft_kill         = pilot_stats[4][22..-1].to_i
+    mission.enemy_static_aircraft_kill  = pilot_stats[5][29..-1].to_i
+    mission.enemy_tank_kill             = pilot_stats[6][18..-1].to_i
+    mission.enemy_car_kill              = pilot_stats[7][17..-1].to_i
+    mission.enemy_artillery_kill        = pilot_stats[8][23..-1].to_i
+    mission.enemy_AAA_kill              = pilot_stats[9][17..-1].to_i
+    mission.enemy_wagon_kill            = pilot_stats[10][19..-1].to_i
+    mission.enemy_ship_kill             = pilot_stats[11][18..-1].to_i
+    mission.friend_aircraft_kill        = pilot_stats[12][23..-1].to_i
+    mission.friend_static_aircraft_kill = pilot_stats[13][30..-1].to_i
+    mission.friend_tank_kill            = pilot_stats[14][19..-1].to_i
+    mission.friend_car_kill             = pilot_stats[15][18..-1].to_i
+    mission.friend_artillery_kill       = pilot_stats[16][24..-1].to_i
+    mission.friend_AAA_kill             = pilot_stats[17][18..-1].to_i
+    mission.friend_wagon_kill           = pilot_stats[18][20..-1].to_i
+    mission.friend_ship_kill            = pilot_stats[19][19..-1].to_i
+    mission.fire_bullets                = pilot_stats[20][16..-1].to_i
+    mission.hit_bullets                 = pilot_stats[21][15..-1].to_i
+    mission.hit_air_bullets             = pilot_stats[22][18..-1].to_i
+    mission.fire_roskets                = pilot_stats[23][16..-1].to_i
+    mission.hit_roskets                 = pilot_stats[24][15..-1].to_i
+    mission.fire_bombs                  = pilot_stats[25][14..-1].to_i
+    mission.hit_bombs                   = pilot_stats[26][13..-1].to_i
+    mission.land_count = mission.kia_count = mission.mia_count = mission.left_count = mission.hit_the_silk_count = mission.emergency_land_count = mission.captured_count = mission.in_flight_count = 0
  
-    case @last_state
+    case mission.last_state
     when "Landed at Airfield":
-      @land_count = 1
+      mission.land_count = 1
     when "KIA":
-      @kia_count = 1
+      mission.kia_count = 1
     when "MIA":
-      @mia_count = 1
+      mission.mia_count = 1
     when "Left the Game":
-      @left_count = 1
+      mission.left_count = 1
     when "Hit the Silk":
-      @hit_the_silk_count = 1
+      mission.hit_the_silk_count = 1
     when "Captured":
-      @captured_count = 1
+      mission.captured_count = 1
     when "Emergency Landed"
-      @emergency_land_count = 1
+      mission.emergency_land_count = 1
     when "In Flight":
-      @in_flight_count = 1
+      mission.in_flight_count = 1
     end
-    @sorties = 1
-    case dead_or_alive
+    mission.sorties = 1
+    case mission.dead_or_alive
     when "Dead":
-      @alive_streak = 0
-      @kill_streak = 0
+      mission.alive_streak = 0
+      mission.kill_streak = 0
     when "Alive":
-      @kill_streak ||= 0
-      @alive_streak = 1
-      @kill_streak += @enemy_aircraft_kill
+      mission.kill_streak ||= 0
+      mission.alive_streak = 1
+      mission.kill_streak += mission.enemy_aircraft_kill
     end
-    self
+    mission
   end
   
   def dead_or_alive
@@ -128,6 +130,8 @@ class PilotMissionLog
       "Alive"
     when "In Flight":
       "Alive"
+    when "Left the Game":
+      "Alive"
     else "Dead"
     end
   end
@@ -138,7 +142,7 @@ class PilotMissionLog
   end
   
   def survived_count
-    @captured_count + @land_count + @emergency_land_count + @hit_the_silk_count + @in_flight_count
+    @captured_count + @land_count + @emergency_land_count + @hit_the_silk_count + @in_flight_count + @left_count
   end
   
   def survivability
@@ -182,6 +186,7 @@ class PilotMissionLog
     r.emergency_land_count        = @emergency_land_count + e.emergency_land_count
     r.captured_count              = @captured_count + e.captured_count
     r.in_flight_count             = @in_flight_count + e.in_flight_count
+    r.left_count                  = @left_count + e.left_count
     
     case e.dead_or_alive
     when "Dead":
@@ -196,12 +201,17 @@ class PilotMissionLog
 end
 
 class MissionLog
-  def parse(eventlog)
+  def self.parse(eventlog)
+    reference_point = Chronic.parse("midnight")
+    started_at = Chronic.parse(eventlog[2][0..7], :now => reference_point)
+    ended_at = Chronic.parse(eventlog[eventlog.index("-------------------------------------------------------\n")-1][0..7], :now => reference_point)
+    lasted_minutes = (ended_at-started_at).to_i/60
     stats = eventlog.slice(eventlog.index("-------------------------------------------------------\n")..(eventlog.index("============ eof ==============")-2))
     result = []
     while (pilot_stats = stats.slice!(0,27)).size == 27 do
-      result << PilotMissionLog.new.parse(pilot_stats)
+      result << PilotMissionLog.parse(pilot_stats)
     end
+    result << lasted_minutes
     return result
   end
 end
@@ -213,12 +223,13 @@ File.open(ARGV[0], 'r') do |file|
      stats.slice!(0..(stats.index("===== eventlog.lst =====\n")-1))
      mission = stats.slice!(0..stats.index("============ eof ==============\n"))
      mission[-1].rstrip!
-    @missions << MissionLog.new.parse(mission).sort_by{|pilot| pilot.score}.reverse
+     mission_log = MissionLog.parse(mission)
+     lasted_minutes = mission_log.pop
+     @missions << [mission_log.sort_by{|pilot| pilot.score}.reverse, lasted_minutes]
   end
 end
-
 @overall = []
-@missions.flatten.group_by(&:name).each_value do |value|
+@missions.map(&:first).flatten.group_by(&:name).each_value do |value|
   @overall << value.inject {|sum, n| sum + n}
 end
 @missions.reverse!
