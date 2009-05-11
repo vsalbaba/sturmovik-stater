@@ -4,7 +4,7 @@
 %h2 Suma
 
 
-%table{:rules => "rows", :width => "100%"}
+%table.overall{:rules => "rows", :width => "100%"}
   %tr
     %th
     %th
@@ -53,7 +53,7 @@
       %td{:align => "right"}= pilot.kill_streak
 
 %br/
-%table{:rules => "rows", :width => "100%"}
+%table.explanation{:rules => "rows", :width => "100%"}
   %tr
     %td Pozemní
     %td Auta + Vagonky + Letadla na zemi + Artilerie
@@ -86,26 +86,28 @@
   %h3 
     ="Mise ##{@missions.size - index}"
   .time_lasted="#{mission[1]} min."
-
-  %table{:rules => "rows"}
-    %tr
-      %th Pilot
-      %th Skóre
-      %th Sestřely
-      %th Pozemní
-      %th AAA a tanky
-      %th Vystřeleno
-      %th Zasahy vzduch
-      %th Zasahy zeme
-      %th Stav
-    - mission.first.each do |pilot|
+  .mission_block
+    %table.mission{:rules => "rows"}
       %tr
-        %td= pilot.name
-        %td{:align => "right"}= pilot.score
-        %td{:align => "right"}= pilot.enemy_aircraft_kill
-        %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
-        %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
-        %td{:align => "right"}= pilot.fire_bullets
-        %td{:align => "right"}= pilot.hit_air_bullets
-        %td{:align => "right"}= pilot.hit_bullets - pilot.hit_air_bullets
-        %td{:align => "center"}= pilot.last_state
+        %th Pilot
+        %th Skóre
+        %th Sestřely
+        %th Pozemní
+        %th AAA a tanky
+        %th Vystřeleno
+        %th Zasahy vzduch
+        %th Zasahy zeme
+        %th Stav
+        %th letadlo
+      - mission.first.each do |pilot|
+        %tr
+          %td= pilot.name
+          %td{:align => "right"}= pilot.score
+          %td{:align => "right"}= pilot.enemy_aircraft_kill
+          %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
+          %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
+          %td{:align => "right"}= pilot.fire_bullets
+          %td{:align => "right"}= pilot.hit_air_bullets
+          %td{:align => "right"}= pilot.hit_bullets - pilot.hit_air_bullets
+          %td{:align => "center"}= pilot.last_state
+          %td{:align => "left"}= pilot.plane
