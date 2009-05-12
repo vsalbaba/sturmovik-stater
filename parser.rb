@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'haml'
+require 'sass'
 require 'chronic'
 module Enumerable
   def group_by
@@ -353,8 +354,12 @@ end
 end
 @missions.reverse!
 @overall = @overall.sort_by{|pilot| pilot.score}.reverse
-engine = Haml::Engine.new(File.read("template.html.haml"))
+
 
 File.open("output.html", "w") do |file|
-  file.write engine.render(self)
+  file.write Haml::Engine.new(File.read("template.html.haml")).render(self)
+end
+
+File.open("output.css", "w") do |file|
+  file.write Sass::Engine.new(File.read("template.sass"), :style => :compressed).render
 end
