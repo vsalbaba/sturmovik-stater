@@ -35,14 +35,18 @@
       - @overall.each do |pilot|
         %tr
           %td
-            -if pilot.alive_streak >= 10
+            - alive_tens = pilot.alive_streak / 10
+            - alive_fives = pilot.alive_streak % 10 / 5
+            - alive_tens.times do
               %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
-            -elsif pilot.alive_streak >= 5
+            -alive_fives.times do
               %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
           %td
-            -if pilot.kill_streak >= 10
+            - kill_tens = pilot.kill_streak / 10
+            - kill_fives = pilot.kill_streak % 10 / 5
+            - kill_tens.times do
               %img{:src => "graphics/spade.jpg", :alt => "pikove_eso"}
-            -elsif pilot.kill_streak >= 5
+            - kill_fives.times do
               %img{:src => "graphics/krize.jpg", :alt => "krizove_eso"}
           %td= pilot.name
           %td{:align => "right"}= pilot.score
