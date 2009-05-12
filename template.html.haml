@@ -2,7 +2,7 @@
 !!! Strict
 %html
   %head
-    %title 
+    %title
       Tatkovy bozi statistiky, generovano
     %link{ :rel => "stylesheet", :type => "text/css", :href => "output.css"}
   %body
@@ -10,8 +10,8 @@
     Generovano:
     = Time.now.to_s
     %h2 Suma
-    
-    
+
+
     %table.overall{:rules => "rows", :width => "100%"}
       %tr
         %th
@@ -31,7 +31,7 @@
         %th % Přežil
         %th Přežil v řadě
         %th Sestřelů v řadě
-    
+
       - @overall.each do |pilot|
         %tr
           %td
@@ -59,7 +59,7 @@
           %td{:align => "right"}= pilot.survivability.to_s + '%'
           %td{:align => "right"}= pilot.alive_streak
           %td{:align => "right"}= pilot.kill_streak
-    
+
     %br/
     %table.explanation{:rules => "rows", :width => "100%"}
       %tr
@@ -84,14 +84,14 @@
           %img{:src => "graphics/kary.jpg"}
         %td 5 a více vzletů v řadě
       %tr
-        %td 
+        %td
           %img{:src => "graphics/heart.jpg"}
         %td 10 a více vzletů v řadě
-    
+
     %img{ :src => "graphics/bf109karik.png"}
     %h2 Podrobne
     - @missions.each_with_index do |mission, index|
-      %h3 
+      %h3
         ="Mise ##{@missions.size - index}"
       .time_lasted="#{mission[1]} min."
       .mission_block
