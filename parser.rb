@@ -281,17 +281,6 @@ class PilotMissionParsed
     r.hit_roskets = 0
     r.fire_bombs = 0
     r.hit_bombs = 0
-    r.land_count= 0
-    r.kia_count= 0
-    r.mia_count= 0
-    r.left_count= 0
-    r.hit_the_silk_count= 0
-    r.in_flight_count= 0
-    r.sorties= 0
-    r.emergency_land_count= 0
-    r.captured_count= 0
-    r.alive_streak= 0
-    r.kill_streak= 0
     return r
   end
 end
