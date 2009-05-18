@@ -3,37 +3,33 @@
 %html
   %head
     %title
-      Tatkovy bozi statistiky, generovano
+      Statistiky
     %link{ :rel => "stylesheet", :type => "text/css", :href => "output.css"}
   %body
-    %h1 Tatkovy "bozi" statistiky
+    %h1 Taťkovy "boží" statistiky
     Generovano:
     = Time.now.to_s
-    %h2 Suma
 
-
-    %table.overall{:rules => "rows", :width => "100%"}
+    %table.overall{:rules => "rows"}
+      %caption Přehled - Stíhači
       %tr
-        %th
-        %th
         %th Pilot
+        %th
+        %th
         %th Skóre
-        %th Sestřely
-        %th Pozemní
-        %th AAA a tanky
-        %th Vystřeleno
-        %th Zasahy vzduch
-        %th Zasahy zeme
-        %th Střelba
+        %th Sestřelů
         %th Vzletů
-        %th Přistání
-        %th Přežití
+        %th Vzletů celkem
+        %th Sestřelů celkem
+        %th Přežil celkem
+        %th Vystřeleno
+        %th Zas. vzduch
+        %th Střelba
         %th % Přežil
-        %th Přežil v řadě
-        %th Sestřelů v řadě
 
-      - @overall.each do |pilot|
+      - @overall.sort{|p1, p2| p1.kill_streak != p2.kill_streak ? p1.kill_streak <=> p2.kill_streak : p1.score <=> p2.score}.reverse.each do |pilot|
         %tr
+          %td= pilot.name
           %td
             - alive_tens = pilot.alive_streak / 10
             - alive_fives = pilot.alive_streak % 10 / 5
@@ -48,49 +44,69 @@
               %img{:src => "graphics/spade.jpg", :alt => "pikove_eso"}
             - kill_fives.times do
               %img{:src => "graphics/krize.jpg", :alt => "krizove_eso"}
-          %td= pilot.name
           %td{:align => "right"}= pilot.score
+          %td{:align => "right"}= pilot.kill_streak
+          %td{:align => "right"}= pilot.alive_streak
+          %td{:align => "right"}= pilot.sorties
           %td{:align => "right"}= pilot.enemy_aircraft_kill
-          %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
-          %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
+          %td{:align => "right"}= pilot.survived_count
           %td{:align => "right"}= pilot.fire_bullets
           %td{:align => "right"}= pilot.hit_air_bullets
-          %td{:align => "right"}= (pilot.hit_bullets - pilot.hit_air_bullets)
           %td{:align => "right"}= pilot.bullet_accuracy.to_s + '%'
-          %td{:align => "right"}= pilot.sorties
-          %td{:align => "right"}= pilot.land_count
-          %td{:align => "right"}= pilot.survived_count
           %td{:align => "right"}= pilot.survivability.to_s + '%'
-          %td{:align => "right"}= pilot.alive_streak
-          %td{:align => "right"}= pilot.kill_streak
+          
+    %table{:rules => "rows"}
+      %caption Přehled -  bombardéři
+      %tr
+        %th Pilot
+        %th Pozemní celkem
+        %th Vlaky
+        %th Auta
+        %th AAA
+        %th Tanky
+        %th Artilerie
+        %th Letadla na zemi
+        %th Zas. země
+      - @overall.sort_by{|p| p.enemy_wagon_kill + p.enemy_car_kill + p.enemy_AAA_kill + p.enemy_tank_kill + p.enemy_artillery_kill + p.enemy_static_aircraft_kill}.reverse.each do |pilot|
+        %tr
+          %td= pilot.name
+          %td{:align => "right"}= pilot.enemy_wagon_kill + pilot.enemy_car_kill + pilot.enemy_AAA_kill + pilot.enemy_tank_kill + pilot.enemy_artillery_kill + pilot.enemy_static_aircraft_kill
+          %td{:align => "right"}= pilot.enemy_wagon_kill
+          %td{:align => "right"}= pilot.enemy_car_kill
+          %td{:align => "right"}= pilot.enemy_AAA_kill
+          %td{:align => "right"}= pilot.enemy_tank_kill
+          %td{:align => "right"}= pilot.enemy_artillery_kill
+          %td{:align => "right"}= pilot.enemy_static_aircraft_kill
+          %td{:align => "right"}= (pilot.hit_bullets - pilot.hit_air_bullets)
 
-    %br/
-    %table.explanation{:rules => "rows", :width => "100%"}
+    %table{:rules => "rows"}
+      %caption Kniha rekordů
       %tr
-        %td Pozemní
-        %td Auta + Vagonky + Letadla na zemi + Artilerie
-      %tr
-        %td Přežití
-        %td Pristani + Nouzove pristani + Vyskoceni padakem + Zajeti + Odpojeni ze serveru
-      %tr
-        %td Střelba
-        %td (Zasahy do pozemnich cilu + Zasahy do vzdusnych cilu) / Vystreleno naboju
-      %tr
-        %td
-          %img{:src => "graphics/krize.jpg"}
-        %td 5 a více sestřelů v řadě
-      %tr
-        %td
-          %img{:src => "graphics/spade.jpg"}
-        %td 10 a více sestřelů v řadě
-      %tr
-        %td
-          %img{:src => "graphics/kary.jpg"}
-        %td 5 a více vzletů v řadě
-      %tr
-        %td
-          %img{:src => "graphics/heart.jpg"}
-        %td 10 a více vzletů v řadě
+        %th Pilot
+        %th
+        %th
+        %th Sestřelů
+        %th Přežití
+
+      - @overall.each do |pilot|
+        %tr
+          %td= pilot.name
+          %td
+            - alive_tens = pilot.best_alive_streak / 10
+            - alive_fives = pilot.best_alive_streak % 10 / 5
+            - alive_tens.times do
+              %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
+            -alive_fives.times do
+              %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
+          %td
+            - kill_tens = pilot.best_kill_streak / 10
+            - kill_fives = pilot.best_kill_streak % 10 / 5
+            - kill_tens.times do
+              %img{:src => "graphics/spade.jpg", :alt => "pikove_eso"}
+            - kill_fives.times do
+              %img{:src => "graphics/krize.jpg", :alt => "krizove_eso"}
+          %td{:align => "right"}= pilot.best_kill_streak
+          %td{:align => "right"}= pilot.best_alive_streak
 
     %img{ :src => "graphics/bf109karik.png"}
     %h2 Podrobne
@@ -99,25 +115,29 @@
         ="Mise ##{@missions.size - index}"
       .time_lasted="#{mission[1]} min."
       .mission_block
-        %table.mission{:rules => "rows"}
+        %table.mission{:rules => "rows", :width => "70%"}
           %tr
             %th Pilot
             %th Skóre
             %th Sestřely
-            %th Pozemní
-            %th AAA a tanky
+            %th Vlaky
+            %th Auta
+            %th Obrněnci
+            %th Ostatní
             %th Vystřeleno
-            %th Zasahy vzduch
-            %th Zasahy zeme
-            %th Stav
+            %th Zas. vzduch
+            %th Zas. zeme
+            %th Výsledek
             %th Letadlo
           - mission.first.each do |pilot|
             %tr
               %td= pilot.name
               %td{:align => "right"}= pilot.score
               %td{:align => "right"}= pilot.enemy_aircraft_kill
-              %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_car_kill + pilot.enemy_wagon_kill + pilot.enemy_artillery_kill
+              %td{:align => "right"}= pilot.enemy_wagon_kill
+              %td{:align => "right"}= pilot.enemy_car_kill
               %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
+              %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_artillery_kill
               %td{:align => "right"}= pilot.fire_bullets
               %td{:align => "right"}= pilot.hit_air_bullets
               %td{:align => "right"}= pilot.hit_bullets - pilot.hit_air_bullets
