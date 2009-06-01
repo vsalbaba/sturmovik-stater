@@ -24,7 +24,7 @@ module Enumerable
   end
 end
 
-File.open(ARGV[0], 'r') do |file|
+File.open(ARGV[0] || "NGen.log", 'r') do |file|
    stats = file.readlines
    @missions = []
    while stats.index("===== eventlog.lst =====\n") do

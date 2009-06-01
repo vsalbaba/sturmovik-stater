@@ -27,16 +27,9 @@
         %th Střelba
         %th % Přežil
 
-      - @overall.sort{|p1, p2| p1.kill_streak != p2.kill_streak ? p1.kill_streak <=> p2.kill_streak : p1.score <=> p2.score}.reverse.each do |pilot|
+      - @overall.sort{|p1, p2| (p1.kill_streak != p2.kill_streak) ? (p1.kill_streak <=> p2.kill_streak) : (p1.alive_streak != p2.alive_streak ? p1.alive_streak <=> p2.alive_streak : p1.score <=> p2.score) }.reverse.each do |pilot|
         %tr
           %td= pilot.name
-          %td
-            - alive_tens = pilot.alive_streak / 10
-            - alive_fives = pilot.alive_streak % 10 / 5
-            - alive_tens.times do
-              %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
-            -alive_fives.times do
-              %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
           %td
             - kill_tens = pilot.kill_streak / 10
             - kill_fives = pilot.kill_streak % 10 / 5
@@ -44,6 +37,13 @@
               %img{:src => "graphics/spade.jpg", :alt => "pikove_eso"}
             - kill_fives.times do
               %img{:src => "graphics/krize.jpg", :alt => "krizove_eso"}
+          %td
+            - alive_tens = pilot.alive_streak / 10
+            - alive_fives = pilot.alive_streak % 10 / 5
+            - alive_tens.times do
+              %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
+            -alive_fives.times do
+              %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
           %td{:align => "right"}= pilot.score
           %td{:align => "right"}= pilot.kill_streak
           %td{:align => "right"}= pilot.alive_streak
@@ -88,16 +88,9 @@
         %th Sestřelů
         %th Přežití
 
-      - @overall.each do |pilot|
+      - @overall.sort_by(&:best_kill_streak).reverse.each do |pilot|
         %tr
           %td= pilot.name
-          %td
-            - alive_tens = pilot.best_alive_streak / 10
-            - alive_fives = pilot.best_alive_streak % 10 / 5
-            - alive_tens.times do
-              %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
-            -alive_fives.times do
-              %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
           %td
             - kill_tens = pilot.best_kill_streak / 10
             - kill_fives = pilot.best_kill_streak % 10 / 5
@@ -105,6 +98,13 @@
               %img{:src => "graphics/spade.jpg", :alt => "pikove_eso"}
             - kill_fives.times do
               %img{:src => "graphics/krize.jpg", :alt => "krizove_eso"}
+          %td
+            - alive_tens = pilot.best_alive_streak / 10
+            - alive_fives = pilot.best_alive_streak % 10 / 5
+            - alive_tens.times do
+              %img{:src => "graphics/heart.jpg", :alt => "srdcove_eso"}
+            -alive_fives.times do
+              %img{:src => "graphics/kary.jpg", :alt => "karove_eso"}
           %td{:align => "right"}= pilot.best_kill_streak
           %td{:align => "right"}= pilot.best_alive_streak
 
