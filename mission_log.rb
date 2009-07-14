@@ -25,7 +25,7 @@ class MissionLog
     
     parse_log
 
-    @mission << @lasted_minutes
+    @mission << "#{@real_world_date}, #{@lasted_minutes}"
     return self
   end
 
@@ -34,6 +34,7 @@ private
     reference_point = Chronic.parse("midnight")
     started_at = Chronic.parse(@log[2][0..7], :now => reference_point)
     ended_at = Chronic.parse(@log[-2][0..7], :now => reference_point)
+    @real_world_date = @log[0][(@log[0].index("[").next)..(@log[0].index("]").pred-3)]
     @lasted_minutes = (ended_at-started_at).to_i/60
   end
   
