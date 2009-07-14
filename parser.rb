@@ -50,5 +50,5 @@ File.open((ARGV[1] || "output") + ".html", "w") do |file|
 end
 
 File.open("output.css", "w") do |file|
-  file.write Sass::Engine.new(File.read("template.sass"), :style => :compressed).render
+  file.write Sass::Engine.new(File.read("template.sass")).render
 end
