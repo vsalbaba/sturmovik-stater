@@ -31,14 +31,13 @@ File.open(ARGV[0] || "NGen.log", 'r') do |file|
      mission = stats.slice!(0..stats.index("-------------\n"))
      mission[-1].rstrip!
      mission_object = MissionLog.new(mission)
-     mission_log = mission_object.mission
-     lasted_minutes = mission_log.pop
-     @missions << [mission_log.sort_by{|pilot| pilot.score}.reverse, lasted_minutes]
+     mission_object.mission = mission_object.mission.sort_by{|pilot| pilot.score}.reverse
+     @missions << mission_object
   end
 end
 
 @overall = []
-@missions.map(&:first).flatten.group_by(&:name).each_value do |value|
+@missions.map(&:mission).flatten.group_by(&:name).each_value do |value|
   @overall << value.inject {|sum, n| sum + n}
 end
 @missions.reverse!

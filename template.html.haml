@@ -106,7 +106,6 @@
             %th
             %th Sestřelů
             %th Přežití
-    
           - @overall.sort_by(&:best_kill_streak).reverse.each do |pilot|
             %tr
               %td= pilot.name
@@ -132,10 +131,11 @@
               %td{:align => "right"}= pilot.best_alive_streak
     
         %h2 Podrobne
-        - @missions.each_with_index do |mission, index|
+        - @missions.each_with_index do |mission_log, index|
           %h3.mission
-            .time_lasted
-              ="#{mission[1]} min."
+            = mission_log.real_world_date
+          .time_lasted
+            ="#{mission_log.lasted_minutes} min."
           .mission_block
             %table#mission{:rules => "rows"}
               %tr
@@ -149,11 +149,24 @@
                 %th Vystřeleno
                 %th Výsledek
                 %th Letadlo
-              - mission.first.each do |pilot|
+              - mission_log.mission.each do |pilot|
                 %tr
                   %td.pilot_name= pilot.name
                   %td.score{:align => "right"}= pilot.score
-                  %td{:align => "right"}= pilot.enemy_aircraft_kill
+                  - plane_types = mission_log.planes[pilot.name].kills.map(&:plane_type)
+                  - plane_types.sort!
+
+                  - result = []
+                  - until plane_types.empty? do
+                    - planes = plane_types.take_while do |e|
+                      - e == plane_types.first
+                    - if planes.size > 1
+                      - result << "#{planes.size}x#{plane_types.first}"
+                    - else
+                      -result << plane_types.first
+                    - plane_types.shift(planes.size)
+                      
+                  %td{:align => "right"}= result.join(", ")
                   %td{:align => "right"}= pilot.enemy_wagon_kill
                   %td{:align => "right"}= pilot.enemy_car_kill
                   %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
