@@ -9,7 +9,7 @@
     .heading
       .content
         #pinup_girl
-        #generated 
+        #generated
           Generovano:
           = Time.now.to_s
 
@@ -26,7 +26,7 @@
             %th Zas. vzduch
             %th Střelba
             %th % Přežil
-    
+
           - @overall.sort{|p1, p2| (p1.kill_streak != p2.kill_streak) ? (p1.kill_streak <=> p2.kill_streak) : (p1.alive_streak != p2.alive_streak ? p1.alive_streak <=> p2.alive_streak : p1.score <=> p2.score) }.reverse.each do |pilot|
             %tr
               %td.pilot_name= pilot.name
@@ -39,7 +39,7 @@
               %td{:align => "right"}= pilot.hit_air_bullets
               %td{:align => "right"}= pilot.bullet_accuracy.to_s + '%'
               %td{:align => "right"}= pilot.survivability.to_s + '%'
-        
+
         %table#current_fighter_stats{:rules => "rows"}
           %caption Aktuálně
           %tr
@@ -48,7 +48,7 @@
             %th
             %th Sestřelů
             %th Vzletů
-            
+
           - @overall.sort{|p1, p2| (p1.kill_streak != p2.kill_streak) ? (p1.kill_streak <=> p2.kill_streak) : (p1.alive_streak != p2.alive_streak ? p1.alive_streak <=> p2.alive_streak : p1.score <=> p2.score) }.reverse.each do |pilot|
             %tr
               %td.pilot_name= pilot.name
@@ -85,7 +85,7 @@
             %th Artilerie
             %th Letadla na zemi
             %th Zas. země
-          
+
           - @overall.sort_by{|p| p.enemy_wagon_kill + p.enemy_car_kill + p.enemy_AAA_kill + p.enemy_tank_kill + p.enemy_artillery_kill + p.enemy_static_aircraft_kill}.reverse.each do |pilot|
             %tr
               %td= pilot.name
@@ -97,7 +97,7 @@
               %td{:align => "right"}= pilot.enemy_artillery_kill
               %td{:align => "right"}= pilot.enemy_static_aircraft_kill
               %td{:align => "right"}= (pilot.hit_bullets - pilot.hit_air_bullets)
-      
+
         %table#high_scores{:rules => "rows"}
           %caption Kniha rekordů
           %tr
@@ -129,7 +129,7 @@
                     .hidden_text 5 sorties medal
               %td{:align => "right"}= pilot.best_kill_streak
               %td{:align => "right"}= pilot.best_alive_streak
-    
+
         %h2 Podrobne
         - @missions.each_with_index do |mission_log, index|
           %h3.mission
@@ -137,6 +137,7 @@
           .time_lasted
             ="#{mission_log.lasted_minutes} min."
           .mission_block
+            - blue_aces_killed = red_aces_killed = 0
             %table#mission{:rules => "rows"}
               %tr
                 %th Pilot
@@ -153,24 +154,74 @@
                 %tr
                   %td.pilot_name= pilot.name
                   %td.score{:align => "right"}= pilot.score
-                  - plane_types = mission_log.planes[pilot.name].kills.map(&:plane_type)
-                  - plane_types.sort!
+                  - kill_plane_types = mission_log.planes[pilot.name].kills
+                  - damaged_plane_types = mission_log.planes[pilot.name].damaged
+
+                  - kill_plane_types = kill_plane_types.sort_by(&:plane_type)
+                  - damaged_plane_types = damaged_plane_types.sort_by(&:plane_type)
 
                   - result = []
-                  - until plane_types.empty? do
-                    - planes = plane_types.take_while do |e|
-                      - e == plane_types.first
+
+                  - until kill_plane_types.empty? do
+                    - planes = kill_plane_types.take_while do |e|
+                      - e.plane_type == kill_plane_types.first.plane_type
+                    - text_to_add = kill_plane_types.first.human? ? kill_plane_types.first.pilot_name : kill_plane_types.first.plane_type
+                    - if kill_plane_types.first.skill == 3.to_s
+                      - case kill_plane_types.first.side
+                        - when "BLUE":
+                          - text_to_add += "<div class='blue_star'><div class='hidden_text'>Ace!</div></div>"
+                          - blue_aces_killed += 1
+                        - when "RED":
+                          - text_to_add += "<div class='red_star'><div class='hidden_text'>Ace!</div></div>"
+                          - red_aces_killed += 1
                     - if planes.size > 1
-                      - result << "#{planes.size}x#{plane_types.first}"
+                      - plane_text = "#{planes.size}x#{text_to_add}" 
+                      - result << plane_text
                     - else
-                      -result << plane_types.first
-                    - plane_types.shift(planes.size)
-                      
-                  %td{:align => "right"}= result.join(", ")
+                      -result << text_to_add
+                    - kill_plane_types.shift(planes.size)
+
+                  - result_damaged = []
+                  - until damaged_plane_types.empty? do
+                    - planes = damaged_plane_types.take_while do |e|
+                      - e.plane_type == damaged_plane_types.first.plane_type
+                    - text_to_add = damaged_plane_types.first.human? ? damaged_plane_types.first.pilot_name : damaged_plane_types.first.plane_type
+                    - if planes.size > 1
+                      - result_damaged << "#{planes.size}x#{text_to_add}"
+                    - else
+                      -result_damaged << text_to_add
+                    - damaged_plane_types.shift(planes.size)
+
+                  %td{:align => "right"}
+                    = "#{result.join(", ")}"
+                    = "+ #{result_damaged.join(", ")} pošk." unless result_damaged.empty?
                   %td{:align => "right"}= pilot.enemy_wagon_kill
                   %td{:align => "right"}= pilot.enemy_car_kill
                   %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
                   %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_artillery_kill
                   %td{:align => "right"}= pilot.fire_bullets
                   %td{:align => "center"}= pilot.last_state
-                  %td{:align => "left"}= pilot.plane
+                  %td{:align => "left"}= mission_log.planes[pilot.name].plane_type
+            -case red_aces_killed
+            -when 0:
+            -when 1:
+              V souboji s námi zahynulo sovětské eso
+              = pick_name(:russian)
+            -else
+              V soubojích s námi byli sestřeleni špičkoví sovětští piloti 
+              - names = []
+              - red_aces_killed.times do
+                - names << pick_name(:russian)
+              = names[0..-2].join(", ") + " a #{names.last}"
+            -case blue_aces_killed
+            -when 0:
+            -when 1:
+              V souboji s námi zahynulo německé eso
+              = pick_name(:german)
+            -else
+              V soubojích s námi byli sestřeleni špičkoví němečtí piloti 
+              - names = []
+              - blue_aces_killed.times do
+                - names << pick_name(:german)
+              = names[0..-2].join(", ") + " a #{names.last}"
+            

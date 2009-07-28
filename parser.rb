@@ -5,7 +5,8 @@ require 'chronic'
 require 'pilot_mission_log'
 require 'pilot_mission_parsed'
 require 'mission_log'
-
+require 'name_generator/dumb_generator'
+include NamesGenerator
 module Enumerable
   def group_by
     assoc = Hash.new

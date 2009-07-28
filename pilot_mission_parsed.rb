@@ -11,21 +11,23 @@ class PilotMissionParsed
     @car = $7.to_i
     @trn = $8.to_i
     @plane = $9
+    rewrite_last_state
+    self
   end
   
   def rewrite_last_state
     @last_state = case @last_state
-      when "Landed": 
-        "Landed at Airfield";
-      when "Disconnected": 
-        "Left the Game"
-      when "Bailed": 
-        "Hit the Silk"
-      when "Emergency landi": 
-        "Emergency Landed"
-      else
-        @last_state
-      end
+    when "Landed": 
+      "Landed at Airfield"
+    when "Disconnected": 
+      "Left the Game"
+    when "Bailed": 
+      "Hit the Silk"
+    when "Emergency landi": 
+      "Emergency Landed"
+    else
+      @last_state
+    end
   end
   
   def log_pilot
@@ -58,7 +60,7 @@ class PilotMissionParsed
       r.in_flight_count = 1
     end
     r.last_state = @last_state
-    
+
     r.sorties = 1
     case r.dead_or_alive
     when "Dead":
@@ -69,6 +71,7 @@ class PilotMissionParsed
       r.alive_streak = 1
       r.kill_streak += r.enemy_aircraft_kill
     end
+    
     
     r.score = 0
     r.enemy_ship_kill = 0
