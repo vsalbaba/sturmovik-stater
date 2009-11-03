@@ -73,26 +73,26 @@ class PilotMissionLog
     mission.land_count = mission.kia_count = mission.mia_count = mission.left_count = mission.hit_the_silk_count = mission.emergency_land_count = mission.captured_count = mission.in_flight_count = 0
 
     case mission.last_state
-    when "Landed at Airfield":
+    when "Landed at Airfield" then
       mission.land_count = 1
-    when "KIA":
+    when "KIA" then
       mission.kia_count = 1
-    when "MIA":
+    when "MIA" then
       mission.mia_count = 1
-    when "Left the Game":
+    when "Left the Game"then
       mission.left_count = 1
-    when "Hit the Silk":
+    when "Hit the Silk"then
       mission.hit_the_silk_count = 1
-    when "Captured":
+    when "Captured"then
       mission.captured_count = 1
     when "Emergency Landed"
       mission.emergency_land_count = 1
-    when "In Flight":
+    when "In Flight"then
       mission.in_flight_count = 1
     end
     mission.sorties = 1
     case mission.dead_or_alive
-    when "Dead":
+    when "Dead"then
       mission.alive_streak = 0
       mission.kill_streak = 0
       mission.score_streak = 0
@@ -100,7 +100,7 @@ class PilotMissionLog
       mission.best_alive_streak = 0
       mission.best_score_streak = 0
 
-    when "Alive":
+    when "Alive"then
       mission.alive_streak = 1
       mission.kill_streak = mission.enemy_aircraft_kill
       mission.score_streak = mission.score
@@ -113,17 +113,17 @@ class PilotMissionLog
   
   def dead_or_alive
     case @last_state
-    when "Landed at Airfield":
+    when "Landed at Airfield"then
       "Alive"
-    when "Hit the Silk":
+    when "Hit the Silk"then
       "Alive"
-    when "Captured":
+    when "Captured"then
       "Alive"
-    when "Emergency Landed":
+    when "Emergency Landed" then
       "Alive"
-    when "In Flight":
+    when "In Flight" then
       "Alive"
-    when "Left the Game":
+    when "Left the Game" then
       "Dead"
     else "Dead"
     end
@@ -187,11 +187,11 @@ class PilotMissionLog
     r.best_kill_streak = @best_kill_streak
     r.best_score_streak = @best_score_streak
     case e.dead_or_alive
-    when "Dead":
+    when "Dead" then
       r.score_streak = 0
       r.alive_streak = 0
       r.kill_streak = 0
-    when "Alive":
+    when "Alive" then
       r.alive_streak = @alive_streak + e.alive_streak
 
       if r.alive_streak > r.best_alive_streak

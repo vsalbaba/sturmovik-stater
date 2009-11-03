@@ -475,15 +475,10 @@ Ulianov
 Umanskii 
 Urban 
 Urusski 
-Utinmakher Van der Flit 
-Van der Vliet 
-Van Wliet 
 Vans 
 Vargunin 
 Vasiliev 
 Vasilyev
-Veis 
-Veksler 
 Verbukh 
 Verden 
 Veretennikov 
@@ -491,7 +486,6 @@ Vershvovski
 Vikentieva 
 Vinogradov
 Vladimirskii 
-Vliet, van der 
 Vlits 
 Volkov
 Volynski 
@@ -499,12 +493,6 @@ Volynskii
 Vorobiev 
 Vorobyov
 Vorontsov-Dashkov 
-Weinstein 
-Werner 
-Wittenburg 
-Wliet, van 
-Woerden, Fan 
-Woerden, van 
 Wolkowicz 
 Wolowitz 
 Worden 
@@ -515,7 +503,6 @@ Zalesskii
 Zalicker 
 Zaytsev
 Zeif 
-Zelecker 
 Zelichonok 
 Zhalobovskaia 
 Zheldak 

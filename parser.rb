@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'rubygems'
 require 'haml'
 require 'sass'
@@ -50,5 +51,5 @@ File.open((ARGV[1] || "output") + ".html", "w") do |file|
 end
 
 File.open("output.css", "w") do |file|
-  file.write Sass::Engine.new(File.read("template.sass")).render
+  file.write Sass::Engine.new(File.read("template.sass"), {:encoding => 'utf-8'}).render
 end

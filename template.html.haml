@@ -1,5 +1,5 @@
-!!! XML
-!!!
+!!! XML utf-8
+- #encoding: utf-8
 %html
   %head
     %title
@@ -12,6 +12,14 @@
         #generated
           Generovano:
           = Time.now.to_s
+        .previous_statistics
+          %ul
+            %li
+              %a{:href => "stalingrad.html"}
+                Stalingrad 22.3. - 25.05.2009
+            %li
+              %a{:href => "output.html"}
+                Aktuální
 
         %table#overall_stats{:rules => "rows"}
           %caption Přehled
@@ -27,7 +35,7 @@
             %th Střelba
             %th % Přežil
 
-          - @overall.sort{|p1, p2| (p1.kill_streak != p2.kill_streak) ? (p1.kill_streak <=> p2.kill_streak) : (p1.alive_streak != p2.alive_streak ? p1.alive_streak <=> p2.alive_streak : p1.score <=> p2.score) }.reverse.each do |pilot|
+          - @overall.sort{|p1, p2| (p1.score != p2.score) ? (p1.score <=> p2.score) : (p1.alive_streak != p2.alive_streak ? p1.alive_streak <=> p2.alive_streak : p1.kill_streak <=> p2.kill_streak) }.reverse.each do |pilot|
             %tr
               %td.pilot_name= pilot.name
               %td.score{:align => "right"}= pilot.score
@@ -85,6 +93,7 @@
             %th Artilerie
             %th Letadla na zemi
             %th Zas. země
+            %th Odhozeno bomb
 
           - @overall.sort_by{|p| p.enemy_wagon_kill + p.enemy_car_kill + p.enemy_AAA_kill + p.enemy_tank_kill + p.enemy_artillery_kill + p.enemy_static_aircraft_kill}.reverse.each do |pilot|
             %tr
@@ -97,6 +106,7 @@
               %td{:align => "right"}= pilot.enemy_artillery_kill
               %td{:align => "right"}= pilot.enemy_static_aircraft_kill
               %td{:align => "right"}= (pilot.hit_bullets - pilot.hit_air_bullets)
+              %td{:align => "right"}= pilot.fire_bombs
 
         %table#high_scores{:rules => "rows"}
           %caption Kniha rekordů
@@ -105,7 +115,7 @@
             %th
             %th
             %th Sestřelů
-            %th Přežití
+            %th Vzletů
           - @overall.sort_by(&:best_kill_streak).reverse.each do |pilot|
             %tr
               %td= pilot.name
@@ -168,10 +178,10 @@
                     - text_to_add = kill_plane_types.first.human? ? kill_plane_types.first.pilot_name : kill_plane_types.first.plane_type
                     - if kill_plane_types.first.skill == 3.to_s
                       - case kill_plane_types.first.side
-                        - when "BLUE":
+                        - when "BLUE" then
                           - text_to_add += "<div class='blue_star'><div class='hidden_text'>Ace!</div></div>"
                           - blue_aces_killed += 1
-                        - when "RED":
+                        - when "RED" then
                           - text_to_add += "<div class='red_star'><div class='hidden_text'>Ace!</div></div>"
                           - red_aces_killed += 1
                     - if planes.size > 1
@@ -194,7 +204,10 @@
 
                   %td{:align => "right"}
                     = "#{result.join(", ")}"
-                    = "+ #{result_damaged.join(", ")} pošk." unless result_damaged.empty?
+                    - unless result_damaged.empty? then
+                      +
+                      = result_damaged.join(", ")
+                      pošk.
                   %td{:align => "right"}= pilot.enemy_wagon_kill
                   %td{:align => "right"}= pilot.enemy_car_kill
                   %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
@@ -203,8 +216,8 @@
                   %td{:align => "center"}= pilot.last_state
                   %td{:align => "left"}= mission_log.planes[pilot.name].plane_type
             -case red_aces_killed
-            -when 0:
-            -when 1:
+            -when 0 then
+            -when 1 then
               V souboji s námi zahynulo sovětské eso
               = pick_name(:russian)
             -else
@@ -214,8 +227,8 @@
                 - names << pick_name(:russian)
               = names[0..-2].join(", ") + " a #{names.last}"
             -case blue_aces_killed
-            -when 0:
-            -when 1:
+            -when 0 then
+            -when 1 then
               V souboji s námi zahynulo německé eso
               = pick_name(:german)
             -else

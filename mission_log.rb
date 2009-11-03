@@ -24,6 +24,8 @@ class Plane
     # rada ,
       'air.IAR_80'         => {:name => 'IAR-80', :side => "BLUE"},
       'air.IAR_81A'        => {:name => 'IAR-81A', :side => "BLUE"},
+    #rada 'He'
+      'air.HE_111H2'       => {:name => 'HE-111', :side => 'BLUE'},
 
     # RED
     # rada I
@@ -46,7 +48,7 @@ class Plane
     # rada La 
       'air.LA_5'           => {:name =>'La-5', :side => "RED"},
     # rada Il 
-      'air.IL_2_1941Early' => {:name =>'Il-2 Early', :side => "RED"}
+      'air.IL_2_1941Early' => {:name =>'Il-2', :side => "RED"}
     }
   end
   
@@ -164,15 +166,15 @@ private
     destroyed_regexp = /^\d\d:\d\d:\d\d (.*) destroyed by #{plane.serial} at .*$/
       @log.each do |line|
         case  line
-        when kill_regexp:
+        when kill_regexp then
           killed_plane = Plane.new( $1+"(0)")
           killed_plane = @planes[@planes.index(killed_plane)] if @planes.values.include? killed_plane
           plane.kills << killed_plane
-        when damage_regexp:
+        when damage_regexp then
           damaged_plane = Plane.new( $1+"(0)")
           damaged_plane = @planes[@planes.index(damaged_plane)] if @planes.values.include? damaged_plane
           plane.damaged << damaged_plane
-        when destroyed_regexp:
+        when destroyed_regexp then
           plane.destroyed << $1
         end
       end

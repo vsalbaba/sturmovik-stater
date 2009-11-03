@@ -7,6 +7,6 @@ module NamesGenerator
       @surnames = file.readlines
     end
     srand
-    "#{@names.choice.strip} #{@surnames.choice.strip}"
+    "#{@names[rand(@names.length)].strip} #{@surnames[rand(@surnames.length)].strip}"
   end
 end

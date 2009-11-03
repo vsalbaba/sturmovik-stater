@@ -1,7 +1,7 @@
 class PilotMissionParsed
   attr_accessor :name, :last_state, :fighter_kills, :bomber_kills, :art, :arm, :car, :trn, :plane
   def initialize(pilot)
-    pilot =~ /^(.+?):.+?\s(\w.*\w)\s+Fgt: \d+\+ (\d+) Bmb: \d+\+ (\d+) Gnd: \d+ Art: (\d+) Arm: (\d+) Shp: 0\+ \d+ Car: (\d+) Trn:\s*(\d+).*Oth: 0 (.*)\s*$/
+    pilot =~ /^(.+?):.+?\s(\w.*\w)\s+Fgt: \d+\+ (\d+) Bmb: \d+\+ (\d+) Gnd: \d+ Art: (\d+) Arm: (\d+) Shp: 0\+ \d+ Car:\s*(\d+) Trn:\s*(\d+).*Oth: 0 (.*)\s*$/
     @name = $1
     @last_state = $2
     @fighter_kills = $3.to_i
@@ -17,13 +17,13 @@ class PilotMissionParsed
   
   def rewrite_last_state
     @last_state = case @last_state
-    when "Landed": 
+    when "Landed" then 
       "Landed at Airfield"
-    when "Disconnected": 
+    when "Disconnected" then 
       "Left the Game"
-    when "Bailed": 
+    when "Bailed" then 
       "Hit the Silk"
-    when "Emergency landi": 
+    when "Emergency landi" then 
       "Emergency Landed"
     else
       @last_state
@@ -44,29 +44,29 @@ class PilotMissionParsed
     
     r.land_count = r.kia_count = r.mia_count = r.left_count = r.hit_the_silk_count = r.emergency_land_count = r.captured_count = r.in_flight_count = 0
     case @last_state
-    when "Landed at Airfield":
+    when "Landed at Airfield" then
       r.land_count = 1
-    when "KIA":
+    when "KIA" then
       r.kia_count = 1
-    when "MIA":
+    when "MIA" then
       r.mia_count = 1
-    when "Left the Game":
+    when "Left the Game" then
       r.left_count = 1
-    when "Hit the Silk":
+    when "Hit the Silk" then
       r.hit_the_silk_count = 1
     when "Emergency Landed"
       r.emergency_land_count = 1
-    when "In Flight":
+    when "In Flight" then
       r.in_flight_count = 1
     end
     r.last_state = @last_state
 
     r.sorties = 1
     case r.dead_or_alive
-    when "Dead":
+    when "Dead" then
       r.alive_streak = 0
       r.kill_streak = 0
-    when "Alive":
+    when "Alive" then
       r.kill_streak ||= 0
       r.alive_streak = 1
       r.kill_streak += r.enemy_aircraft_kill
