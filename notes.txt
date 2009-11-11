@@ -1,0 +1,19 @@
+Emergency Landed = x0.7
+Hit the Silk = x0.5
+Landed = x1.0
+In Flight = x1.0
+Captured = x0.2
+KIA = x0.1
+
+1 motor = 100 bodu
+2 motory = 200 bodu
+
+Airplane	from 100 to 250 pts
+(depends on type, mission, etc...)
+Ship/Submarine	100 pts
+AAA gun	75 pts
+Tank/AAA truck	40 pts
+Artillery	30 pts
+Train element	30 pts
+Truck/Car	25 pts
+Ground airplane	20 pts

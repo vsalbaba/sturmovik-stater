@@ -48,7 +48,8 @@ class Plane
     # rada La 
       'air.LA_5'           => {:name =>'La-5', :side => "RED"},
     # rada Il 
-      'air.IL_2_1941Early' => {:name =>'Il-2', :side => "RED"}
+      'air.IL_2_1941Early' => {:name =>'Il-2', :side => "RED"},
+      'air.IL_2_1941Late'  => {:name => "Il-2", :side => "RED"}
     }
   end
   
