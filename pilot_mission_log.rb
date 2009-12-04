@@ -1,29 +1,29 @@
 class PilotMissionLog
-  attr_accessor :name, 
-                :score, 
-                :last_state, 
+  attr_accessor :name,
+                :score,
+                :last_state,
                 :enemy_aircraft_kill,
                 :enemy_static_aircraft_kill,
                 :enemy_tank_kill,
-                :enemy_car_kill, 
-                :enemy_artillery_kill, 
-                :enemy_AAA_kill, 
-                :enemy_wagon_kill, 
-                :enemy_ship_kill, 
-                :friend_aircraft_kill, 
-                :friend_static_aircraft_kill, 
-                :friend_tank_kill, 
-                :friend_car_kill, 
-                :friend_artillery_kill, 
-                :friend_AAA_kill, 
-                :friend_wagon_kill, 
-                :friend_ship_kill, 
-                :fire_bullets, 
-                :hit_bullets, 
-                :hit_air_bullets, 
-                :fire_roskets, 
-                :hit_roskets, 
-                :fire_bombs, 
+                :enemy_car_kill,
+                :enemy_artillery_kill,
+                :enemy_AAA_kill,
+                :enemy_wagon_kill,
+                :enemy_ship_kill,
+                :friend_aircraft_kill,
+                :friend_static_aircraft_kill,
+                :friend_tank_kill,
+                :friend_car_kill,
+                :friend_artillery_kill,
+                :friend_AAA_kill,
+                :friend_wagon_kill,
+                :friend_ship_kill,
+                :fire_bullets,
+                :hit_bullets,
+                :hit_air_bullets,
+                :fire_roskets,
+                :hit_roskets,
+                :fire_bombs,
                 :hit_bombs,
                 :land_count,
                 :kia_count,
@@ -41,7 +41,7 @@ class PilotMissionLog
                 :best_kill_streak,
                 :best_score_streak,
                 :plane
-  
+
   def self.parse(pilot_stats)
     mission = self.new
     mission.name                        = pilot_stats[0][7..-1].strip
@@ -110,7 +110,7 @@ class PilotMissionLog
     end
     mission
   end
-  
+
   def dead_or_alive
     case @last_state
     when "Landed at Airfield"then
@@ -128,29 +128,29 @@ class PilotMissionLog
     else "Dead"
     end
   end
-  
+
   def bullet_accuracy
     return 0 if @fire_bullets == 0
     ((@hit_bullets.to_f / @fire_bullets)*100).to_i
   end
-  
+
   def survived_count
     @captured_count + @land_count + @emergency_land_count + @hit_the_silk_count + @in_flight_count
   end
-  
+
   def survivability
     return 0 if @sorties == 0
     ((survived_count.to_f / @sorties)*100).to_i
   end
-    
+
   def +(e)
     r = PilotMissionLog.new
-    r.best_alive_streak = 0
-    r.best_kill_streak = 0
-    r.best_score_streak = 0
+    r.best_alive_streak           = 0
+    r.best_kill_streak            = 0
+    r.best_score_streak           = 0
     r.name                        = e.name
     r.score                       = @score + e.score
-    r.last_state                  = e.last_state 
+    r.last_state                  = e.last_state
     r.enemy_aircraft_kill         = @enemy_aircraft_kill + e.enemy_aircraft_kill
     r.enemy_static_aircraft_kill  = @enemy_static_aircraft_kill + e.enemy_static_aircraft_kill
     r.enemy_tank_kill             = @enemy_tank_kill + e.enemy_tank_kill
@@ -183,9 +183,10 @@ class PilotMissionLog
     r.captured_count              = @captured_count + e.captured_count
     r.in_flight_count             = @in_flight_count + e.in_flight_count
     r.left_count                  = @left_count + e.left_count
-    r.best_alive_streak = @best_alive_streak
-    r.best_kill_streak = @best_kill_streak
-    r.best_score_streak = @best_score_streak
+    r.best_alive_streak           = @best_alive_streak
+    r.best_kill_streak            = @best_kill_streak
+    r.best_score_streak           = @best_score_streak
+
     case e.dead_or_alive
     when "Dead" then
       r.score_streak = 0
@@ -195,20 +196,21 @@ class PilotMissionLog
       r.alive_streak = @alive_streak + e.alive_streak
 
       if r.alive_streak > r.best_alive_streak
-        r.best_alive_streak = r.alive_streak 
+        r.best_alive_streak = r.alive_streak
       end
-      
+
       r.kill_streak = @kill_streak + e.kill_streak
-      
+
       if r.kill_streak > r.best_kill_streak
-        r.best_kill_streak = r.kill_streak 
+        r.best_kill_streak = r.kill_streak
       end
-      
+
       # r.score_streak = @score_streak + e.score_streak
       # if r.score_streak > r.best_score_streak
-      #   r.best_score_streak = r.score_streak 
+      #   r.best_score_streak = r.score_streak
       # end
     end
     r
   end
 end
+
