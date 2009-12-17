@@ -1,6 +1,6 @@
 class PilotMissionParsed
-  attr_accessor :name, :last_state, :fighter_kills, :bomber_kills, :art, :arm, :car, :trn, :plane
-  def initialize(pilot)
+  attr_accessor :name, :last_state, :fighter_kills, :bomber_kills, :art, :arm, :car, :trn, :plane, :side
+  def initialize(pilot, side = 'Unknown')
     pilot =~ /^(.+?):.+?\s(\w.*\w)\s+Fgt: \d+\+ (\d+) Bmb: \d+\+ (\d+) Gnd: \d+ Art: (\d+) Arm: (\d+) Shp: 0\+ \d+ Car:\s*(\d+) Trn:\s*(\d+).*Oth: 0 (.*)\s*$/
     @name = $1
     @last_state = $2
@@ -11,28 +11,29 @@ class PilotMissionParsed
     @car = $7.to_i
     @trn = $8.to_i
     @plane = $9
+    @side = side
     rewrite_last_state
     self
   end
-  
+
   def rewrite_last_state
     @last_state = case @last_state
-    when "Landed" then 
+    when "Landed" then
       "Landed at Airfield"
-    when "Disconnected" then 
+    when "Disconnected" then
       "Left the Game"
-    when "Bailed" then 
+    when "Bailed" then
       "Hit the Silk"
-    when "Emergency landi" then 
+    when "Emergency landi" then
       "Emergency Landed"
     else
       @last_state
     end
   end
-  
+
   def log_pilot
     rewrite_last_state
-    
+
     r = PilotMissionLog.new
     r.name = @name
     r.enemy_aircraft_kill = @fighter_kills + @bomber_kills
@@ -41,7 +42,7 @@ class PilotMissionParsed
     r.enemy_car_kill = @car
     r.enemy_wagon_kill = @trn
     r.plane = @plane
-    
+
     r.land_count = r.kia_count = r.mia_count = r.left_count = r.hit_the_silk_count = r.emergency_land_count = r.captured_count = r.in_flight_count = 0
     case @last_state
     when "Landed at Airfield" then
@@ -71,8 +72,8 @@ class PilotMissionParsed
       r.alive_streak = 1
       r.kill_streak += r.enemy_aircraft_kill
     end
-    
-    
+
+
     r.score = 0
     r.enemy_ship_kill = 0
     r.enemy_static_aircraft_kill = 0
@@ -95,3 +96,4 @@ class PilotMissionParsed
     return r
   end
 end
+

@@ -1,6 +1,5 @@
 require 'inifile.rb'
 
-
 class Plane
   attr_accessor :serial_number_with_pilot, :pilot_name, :kills, :damaged, :destroyed, :skill
   def initialize(serial_number, pilot_name = 'AI')
@@ -41,53 +40,53 @@ class Plane
       'air.SB_2M103'       => {:name =>'SB 2M-103', :side => "RED"},
     # rada Lagg
       'air.LAGG_3SERIES4'  => {:name =>'Lagg-3', :side => "RED"},
-    # rada Hurricane 
+    # rada Hurricane
       'air.HurricaneMkIIb' => {:name =>'Hurricane Mk.IIb', :side => "RED"},
-    # rada Mig 
+    # rada Mig
       'air.MIG_3UD'        => {:name =>'Mig-3', :side => "RED"},
-    # rada La 
+    # rada La
       'air.LA_5'           => {:name =>'La-5', :side => "RED"},
-    # rada Il 
+    # rada Il
       'air.IL_2_1941Early' => {:name =>'Il-2', :side => "RED"},
       'air.IL_2_1941Late'  => {:name => "Il-2", :side => "RED"}
     }
   end
-  
+
   def side
     @side ||= @@plane_types[@raw_plane_type][:side] || "Unknown"
   end
-  
+
   def serial
     @serial ||= @serial_number_with_pilot[0..-4]
   end
-  
+
   def number
-    @plane_num ||= @serial[-1].chr
+    @plane_num ||= serial[-1].chr.to_i + 1
   end
-  
+
   def unit
     @unit ||= serial[0..-2]
   end
-  
+
   def raw_plane_type=(object)
     @raw_plane_type = object
     @plane_type = humanize_object_name(object)
   end
-  
+
   def plane_type
     @plane_type
   end
-  
+
   def ==(obj)
     self.serial == obj.serial
   end
-  
+
   def remove_damaged_killed_conflicts!
     @damaged.delete_if do |plane|
       @kills.include? plane
     end
   end
-  
+
   def human?
     @pilot_name != 'AI'
   end
@@ -99,7 +98,7 @@ end
 
 class MissionLog
   attr_accessor :mission, :real_world_date, :lasted_minutes, :planes
-  
+
   def initialize(eventlog)
     parse_eventlog(eventlog)
 
@@ -107,13 +106,14 @@ class MissionLog
     while (pilot_stats = @stats.slice!(0,27)).size == 27 do
       @mission << PilotMissionLog.parse(pilot_stats)
     end
-  
+
     parse_parsed
-    
+
     @parsed_pilots.each do |parsed_pilot|
       pilot = @mission.find { |log_pilot| log_pilot.name == parsed_pilot.name}
       if pilot then
         pilot.plane = parsed_pilot.plane
+        pilot.side = parsed_pilot.side
 
         if pilot.last_state == "Left the Game" then
           pilot.last_state = parsed_pilot.last_state unless parsed_pilot.last_state == "Disconnected"
@@ -122,7 +122,7 @@ class MissionLog
         @mission << parsed_pilot.log_pilot
       end
     end
-    
+
     parse_log
     return self
   end
@@ -136,13 +136,13 @@ private
     @lasted_minutes = (ended_at-started_at).to_i/60
     parse_planes
   end
-  
+
   def parse_parsed
-    red_pilots = @parsed.slice((@parsed.index("RED PILOTS\n")+1)..(@parsed.index("BLUE PILOTS\n")-1))
-    blue_pilots = @parsed.slice((@parsed.index("BLUE PILOTS\n")+1)..(@parsed.index("SUMMARY\n")-1))
-    @parsed_pilots = (red_pilots + blue_pilots).map{|pilot| PilotMissionParsed.new(pilot)}
+    red_pilots = @parsed.slice((@parsed.index("RED PILOTS\n")+1)..(@parsed.index("BLUE PILOTS\n")-1)).map{|pilot| PilotMissionParsed.new(pilot, 'RED')}
+    blue_pilots = @parsed.slice((@parsed.index("BLUE PILOTS\n")+1)..(@parsed.index("SUMMARY\n")-1)).map{|pilot| PilotMissionParsed.new(pilot, 'BLUE')}
+    @parsed_pilots = red_pilots + blue_pilots
   end
-  
+
   def parse_eventlog(eventlog)
     @briefing = eventlog.slice!(0..eventlog.index("===== eventlog.lst =====\n"))
     @log = eventlog.slice!(0..eventlog.index("-------------------------------------------------------\n"))
@@ -150,7 +150,7 @@ private
     @objects = eventlog.slice!(0..(eventlog.index("============ eof ==============\n")))
     @parsed = eventlog.slice!(0..(eventlog.index("============ eof ==============\n")))
   end
-  
+
   def parse_planes
     @planes = {}
     #inventarize human planes
@@ -184,7 +184,7 @@ private
     @planes.each_value do |plane|
       plane.remove_damaged_killed_conflicts!
     end
-     
+
     # @planes.each_value do |plane|
     #   p plane.damaged unless plane.damaged.empty?
     # end
@@ -204,3 +204,4 @@ private
     end
   end
 end
+

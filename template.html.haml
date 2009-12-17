@@ -27,6 +27,8 @@
             %th Pilot
             %th Skóre
             %th Vzletů celkem
+            %th Přistání
+            %th Vyskočení
             %th Sestřelů
             %th Pozemních
             %th Přežil celkem
@@ -40,6 +42,8 @@
               %td.pilot_name= pilot.name
               %td.score{:align => "right"}= pilot.score
               %td{:align => "right"}= pilot.sorties
+              %td{:align => "right"}= pilot.land_count
+              %td{:align => "right"}= pilot.hit_the_silk_count + pilot.mia_count + pilot.emergency_land_count + pilot.captured_count
               %td{:align => "right"}= pilot.enemy_aircraft_kill
               %td{:align => "right"}= pilot.enemy_wagon_kill + pilot.enemy_car_kill + pilot.enemy_AAA_kill + pilot.enemy_tank_kill + pilot.enemy_artillery_kill + pilot.enemy_static_aircraft_kill
               %td{:align => "right"}= pilot.survived_count
@@ -162,7 +166,12 @@
                 %th Letadlo
               - mission_log.mission.each do |pilot|
                 %tr
-                  %td.pilot_name= pilot.name
+                  %td.pilot_name
+                    - if pilot.side == "BLUE" then
+                      .blue_star
+                    - elsif pilot.side == 'RED'
+                      .red_star
+                    = pilot.name
                   %td.score{:align => "right"}= pilot.score
                   - kill_plane_types = mission_log.planes[pilot.name].kills
                   - damaged_plane_types = mission_log.planes[pilot.name].damaged
@@ -173,22 +182,20 @@
                   - result = []
 
                   - until kill_plane_types.empty? do
-                    - planes = kill_plane_types.take_while do |e|
-                      - e.plane_type == kill_plane_types.first.plane_type
-                    - text_to_add = kill_plane_types.first.human? ? kill_plane_types.first.pilot_name : kill_plane_types.first.plane_type
+                    - planes = [kill_plane_types.first]
+
+                    - text_to_add = kill_plane_types.first.human? ? kill_plane_types.first.pilot_name : "#{kill_plane_types.first.plane_type}"
                     - if kill_plane_types.first.skill == 3.to_s
+
                       - case kill_plane_types.first.side
                         - when "BLUE" then
-                          - text_to_add += "<div class='blue_star'><div class='hidden_text'>Ace!</div></div>"
+                          - text_to_add = "<div class='blue_star'><div class='hidden_text'>Ace!</div></div>" + text_to_add
                           - blue_aces_killed += 1
                         - when "RED" then
-                          - text_to_add += "<div class='red_star'><div class='hidden_text'>Ace!</div></div>"
+                          - text_to_add = "<div class='red_star'><div class='hidden_text'>Ace!</div></div>" + text_to_add
                           - red_aces_killed += 1
-                    - if planes.size > 1
-                      - plane_text = "#{planes.size}x#{text_to_add}" 
-                      - result << plane_text
-                    - else
-                      -result << text_to_add
+
+                    -result << text_to_add
                     - kill_plane_types.shift(planes.size)
 
                   - result_damaged = []
@@ -196,24 +203,39 @@
                     - planes = damaged_plane_types.take_while do |e|
                       - e.plane_type == damaged_plane_types.first.plane_type
                     - text_to_add = damaged_plane_types.first.human? ? damaged_plane_types.first.pilot_name : damaged_plane_types.first.plane_type
-                    - if planes.size > 1
-                      - result_damaged << "#{planes.size}x#{text_to_add}"
-                    - else
-                      -result_damaged << text_to_add
+                    -result_damaged << text_to_add
                     - damaged_plane_types.shift(planes.size)
 
                   %td{:align => "right"}
-                    = "#{result.join(", ")}"
+                    = result.join("<br/>")
                     - unless result_damaged.empty? then
-                      +
-                      = result_damaged.join(", ")
+                      - unless result.empty?
+                        %br
+                      = result_damaged.join("<br/>")
                       pošk.
                   %td{:align => "right"}= pilot.enemy_wagon_kill
                   %td{:align => "right"}= pilot.enemy_car_kill
                   %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
                   %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_artillery_kill
                   %td{:align => "right"}= pilot.fire_bullets
-                  %td{:align => "center"}= pilot.last_state
+                  %td{:align => "center"}
+                    - case pilot.last_state
+                    - when "Landed at Airfield" then
+                      .landed
+                    - when "Hit the Silk" then
+                      .bailed
+                    - when "Emergency Landed" then
+                      .crashlanded
+                    - when "KIA" then
+                      .killed
+                    - when "Captured" then
+                      .captured
+                    - when "In Flight" then
+                      .in_flight
+                    - when "Left the Game" then
+                      .disconnected
+                    - else
+                      = pilot.last_state
                   %td{:align => "left"}= mission_log.planes[pilot.name].plane_type
             -case red_aces_killed
             -when 0 then
@@ -221,7 +243,7 @@
               V souboji s námi zahynulo sovětské eso
               = pick_name(:russian)
             -else
-              V soubojích s námi byli sestřeleni špičkoví sovětští piloti 
+              V soubojích s námi byli sestřeleni špičkoví sovětští piloti
               - names = []
               - red_aces_killed.times do
                 - names << pick_name(:russian)
@@ -232,9 +254,9 @@
               V souboji s námi zahynulo německé eso
               = pick_name(:german)
             -else
-              V soubojích s námi byli sestřeleni špičkoví němečtí piloti 
+              V soubojích s námi byli sestřeleni špičkoví němečtí piloti
               - names = []
               - blue_aces_killed.times do
                 - names << pick_name(:german)
               = names[0..-2].join(", ") + " a #{names.last}"
-            
+

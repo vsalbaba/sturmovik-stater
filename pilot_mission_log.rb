@@ -40,7 +40,8 @@ class PilotMissionLog
                 :best_alive_streak,
                 :best_kill_streak,
                 :best_score_streak,
-                :plane
+                :plane,
+                :side
 
   def self.parse(pilot_stats)
     mission = self.new
@@ -124,7 +125,7 @@ class PilotMissionLog
     when "In Flight" then
       "Alive"
     when "Left the Game" then
-      "Dead"
+      "Alive"
     else "Dead"
     end
   end
