@@ -112,6 +112,10 @@ class PilotMissionLog
     mission
   end
 
+  def total_ground_kills
+     enemy_wagon_kill + enemy_car_kill + enemy_AAA_kill + enemy_tank_kill + enemy_artillery_kill + enemy_static_aircraft_kill
+  end
+
   def dead_or_alive
     case @last_state
     when "Landed at Airfield"then

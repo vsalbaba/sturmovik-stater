@@ -18,12 +18,18 @@
               %a{:href => "stalingrad.html"}
                 Stalingrad 22.3. - 25.05.2009
             %li
+              %a{:href => "crimea.html"}
+                Krym 29.6.2009 - 5.1. 2010
+            %li
               %a{:href => "output.html"}
                 Aktuální
 
         %table#overall_stats{:rules => "rows"}
           %caption Přehled
           %tr
+            %th.deaths_good_friend_col
+            %th.medalist_col
+            %th.sharpshooter_col
             %th Pilot
             %th Skóre
             %th Vzletů celkem
@@ -39,6 +45,18 @@
 
           - @overall.sort{|p1, p2| (p1.score != p2.score) ? (p1.score <=> p2.score) : (p1.alive_streak != p2.alive_streak ? p1.alive_streak <=> p2.alive_streak : p1.kill_streak <=> p2.kill_streak) }.reverse.each do |pilot|
             %tr
+              %td
+                - if pilot.score >= 5000 then
+                  .medalist.tooltiped
+                    .tooltip Medajlista: Více jak 5000 bodů
+              %td
+                - if pilot.survivability <= 50 then
+                  .deaths_good_friend.tooltiped
+                    .tooltip Jednou nohou v hrobě: Méně než 50% přežití
+              %td
+                - if pilot.bullet_accuracy >= 10 then
+                  .sharpshooter.tooltiped
+                    .tooltip Čarostřelec: Úspěšnost střelby nad 10%
               %td.pilot_name= pilot.name
               %td.score{:align => "right"}= pilot.score
               %td{:align => "right"}= pilot.sorties
@@ -52,7 +70,7 @@
               %td{:align => "right"}= pilot.bullet_accuracy.to_s + '%'
               %td{:align => "right"}= pilot.survivability.to_s + '%'
 
-        %table#current_fighter_stats{:rules => "rows"}
+        %table#current_fighter_stats.short_table{:rules => "rows"}
           %caption Aktuálně
           %tr
             %th Pilot
@@ -88,6 +106,7 @@
         %table#current_bomber_stats{:rules => "rows"}
           %caption Přehled -  bombardéři
           %tr
+            %th.bomber_col
             %th Pilot
             %th Pozemní celkem
             %th Vlaky
@@ -99,10 +118,14 @@
             %th Zas. země
             %th Odhozeno bomb
 
-          - @overall.sort_by{|p| p.enemy_wagon_kill + p.enemy_car_kill + p.enemy_AAA_kill + p.enemy_tank_kill + p.enemy_artillery_kill + p.enemy_static_aircraft_kill}.reverse.each do |pilot|
+          - @overall.sort_by{|p| p.total_ground_kills}.reverse.each do |pilot|
             %tr
+              %td
+                -if pilot.total_ground_kills >= 20
+                  .bomberman.tooltiped
+                    .tooltip Bombarďák: 20 zničených pozemních cílů
               %td= pilot.name
-              %td{:align => "right"}= pilot.enemy_wagon_kill + pilot.enemy_car_kill + pilot.enemy_AAA_kill + pilot.enemy_tank_kill + pilot.enemy_artillery_kill + pilot.enemy_static_aircraft_kill
+              %td{:align => "right"}= pilot.total_ground_kills
               %td{:align => "right"}= pilot.enemy_wagon_kill
               %td{:align => "right"}= pilot.enemy_car_kill
               %td{:align => "right"}= pilot.enemy_AAA_kill
@@ -112,7 +135,7 @@
               %td{:align => "right"}= (pilot.hit_bullets - pilot.hit_air_bullets)
               %td{:align => "right"}= pilot.fire_bombs
 
-        %table#high_scores{:rules => "rows"}
+        %table#high_scores.short_table{:rules => "rows"}
           %caption Kniha rekordů
           %tr
             %th Pilot
@@ -162,6 +185,7 @@
                 %th Obrněnci
                 %th Ostatní
                 %th Vystřeleno
+                %th Přesnost
                 %th Výsledek
                 %th Letadlo
               - mission_log.mission.each do |pilot|
@@ -211,29 +235,37 @@
                     - unless result_damaged.empty? then
                       - unless result.empty?
                         %br
+                      - result_damaged.map! {|plane| plane + " pošk."}
                       = result_damaged.join("<br/>")
-                      pošk.
                   %td{:align => "right"}= pilot.enemy_wagon_kill
                   %td{:align => "right"}= pilot.enemy_car_kill
                   %td{:align => "right"}= pilot.enemy_AAA_kill + pilot.enemy_tank_kill
                   %td{:align => "right"}= pilot.enemy_static_aircraft_kill + pilot.enemy_artillery_kill
                   %td{:align => "right"}= pilot.fire_bullets
+                  %td{:align => "right"}= pilot.bullet_accuracy.to_s + "%"
                   %td{:align => "center"}
                     - case pilot.last_state
                     - when "Landed at Airfield" then
-                      .landed
+                      .landed.tooltiped
+                        .tooltip Úspěšně přistál
                     - when "Hit the Silk" then
-                      .bailed
+                      .bailed.tooltiped
+                        .tooltip "Vyskočil a zachránil se
                     - when "Emergency Landed" then
-                      .crashlanded
+                      .crashlanded.tooltiped
+                        .tooltip Nouzově přistál
                     - when "KIA" then
-                      .killed
+                      .killed.tooltiped
+                        .tooltip Zabit v akci
                     - when "Captured" then
-                      .captured
+                      .captured.tooltiped
+                        .tooltip Zajat
                     - when "In Flight" then
-                      .in_flight
+                      .in_flight.tooltiped
+                        .tooltip Misi dokončil ve vzduchu
                     - when "Left the Game" then
-                      .disconnected
+                      .disconnected.tooltiped
+                        .tooltip Spadlo připojení
                     - else
                       = pilot.last_state
                   %td{:align => "left"}= mission_log.planes[pilot.name].plane_type

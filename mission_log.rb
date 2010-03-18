@@ -18,13 +18,16 @@ class Plane
       'air.BF_109G2'       => {:name => 'Bf-109 G-2', :side => "BLUE"},
     # rada Bf-110 ,
       'air.BF_110C4B'      => {:name => 'Bf-110 C-4/B', :side => "BLUE"},
-    # rada Ju ,
+      'air.BF_110G2'       => {:name => 'Bf-110 G-2', :side => "BLUE"},
+    # rada Ju 88,
       'air.JU_88A4'        => {:name => 'Ju-88 A-4', :side => "BLUE"},
-    # rada ,
+    # rada IAR,
       'air.IAR_80'         => {:name => 'IAR-80', :side => "BLUE"},
       'air.IAR_81A'        => {:name => 'IAR-81A', :side => "BLUE"},
     #rada 'He'
       'air.HE_111H2'       => {:name => 'HE-111', :side => 'BLUE'},
+    #rada 'Fw-190
+      'air.FW_190A4'   => {:name => 'Fw-190 A', :side => 'BLUE'},
 
     # RED
     # rada I
@@ -36,24 +39,39 @@ class Plane
       'air.PE_2SERIES1'    => {:name =>'Pe-2', :side => "RED"},
     # rada Yak
       "air.YAK_1"          => {:name =>'Yak-1', :side => "RED"},
+      "air.YAK_1B"         => {:name => 'Yak-1B', :side => "RED"},
+      "air.YAK_7B"         => {:name => 'Yak-7B', :side => "RED"},
     # rada SB
       'air.SB_2M103'       => {:name =>'SB 2M-103', :side => "RED"},
     # rada Lagg
-      'air.LAGG_3SERIES4'  => {:name =>'Lagg-3', :side => "RED"},
+      'air.LAGG_3SERIES4'  => {:name =>'LaGG-3', :side => "RED"},
+      'air.LAGG_3SERIES66' => {:name => 'LaGG-3', :side => "RED"},
+      'air.LAGG_3IT'       => {:name => 'LaGG-3IT', :side => "RED"},
+    # rada Spitfire
+      'air.SPITFIRE5B'     => {:name => 'Spitfire Mk Vb', :side => "RED"},
     # rada Hurricane
       'air.HurricaneMkIIb' => {:name =>'Hurricane Mk.IIb', :side => "RED"},
+      'air.HurricaneMkIIbMod' => {:name => 'Hurricane Mk.IIb', :side => 'RED'},
+      'air.P_40M'          => {:name => "P40", :side => "RED"},
     # rada Mig
       'air.MIG_3UD'        => {:name =>'Mig-3', :side => "RED"},
     # rada La
       'air.LA_5'           => {:name =>'La-5', :side => "RED"},
     # rada Il
       'air.IL_2_1941Early' => {:name =>'Il-2', :side => "RED"},
-      'air.IL_2_1941Late'  => {:name => "Il-2", :side => "RED"}
+      'air.IL_2_1941Late'  => {:name => "Il-2", :side => "RED"},
+    # rada Pe
+      'air.PE_2SERIES84'   => {:name => "Pe-2", :side => "RED"}
     }
   end
 
   def side
-    @side ||= @@plane_types[@raw_plane_type][:side] || "Unknown"
+    plane = @@plane_types[@raw_plane_type] 
+    if plane
+      @side = plane[:side]
+    else
+      @side = "Unknown"
+    end
   end
 
   def serial
@@ -92,7 +110,12 @@ class Plane
   end
 
   def humanize_object_name(object)
-    @human_name ||= @@plane_types[object][:name] || object
+    plane = @@plane_types[object]
+    if plane
+      @human_name = plane[:name]
+    else
+      @human_name = object
+    end
   end
 end
 

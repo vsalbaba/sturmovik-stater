@@ -50,6 +50,3 @@ File.open((ARGV[1] || "output") + ".html", "w") do |file|
   file.write Haml::Engine.new(File.read("template.html.haml")).render(self)
 end
 
-File.open("output.css", "w") do |file|
-  file.write Sass::Engine.new(File.read("template.sass"), {:encoding => 'utf-8'}).render
-end

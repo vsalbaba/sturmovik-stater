@@ -1,16 +1,43 @@
-!offset = 5px
+!offset = 10px
 !image_size = 12px
 
+=achievement
+  :background-repeat no-repeat
+  :background-position center center
+  :width 45px
+  :height 45px
+
+=ending
+  :background-repeat no-repeat
+  :background-position center center
+  :width 60px
+  :height 20px
+
+=ace
+  :background-repeat no-repeat
+  :background-position center center
+  :width 12px
+  :height 12px
+
+=star
+  +ace
+  :display inline
+  :padding 12px
+
 th
-  :padding-left  = !offset
-  :padding-right = !offset
+  :padding-left !offset
+  :padding-right !offset
 
 td
-  :padding-left  = !offset
-  :padding-right = !offset
+  :padding-left !offset
+  :padding-right !offset
 
 table
   :margin 5px
+  :width 98%
+
+.short_table
+  :width 30%
 
 body
   :padding 0px 0
@@ -21,7 +48,7 @@ body
   :width 289px
   :height 338px
   :position absolute
-  :left 730px
+  :left 1024px
   :top 350px
   :margin 0
   :margin-left auto
@@ -31,24 +58,21 @@ body
   :text-align right
 
 .five_kills
-  :background url("graphics/krize.jpg") center center no-repeat
-  :width 12px
-  :height 12px
+  +ace
+  :background-image url("graphics/krize.jpg")
 
 .ten_kills
-  :background url("graphics/spade.jpg") center center no-repeat
-  :width 12px
-  :height 12px
+  +ace
+  :background-image url("graphics/spade.jpg")
+
 
 .five_alive
-  :background url("graphics/kary.jpg") center center no-repeat
-  :width 12px
-  :height 12px
+  :background-image url("graphics/kary.jpg")
+  +ace
 
 .ten_alive
-  :background url("graphics/heart.jpg") center center no-repeat
-  :width 12px
-  :height 12px
+  :background-image url("graphics/heart.jpg")
+  +ace
 
 .hidden_text
   :display none
@@ -65,74 +89,73 @@ body
   :width 1000px
 
 .red_star
-  :display inline
-  :padding 12px
-  :background url("graphics/red_star.jpg") center center no-repeat
-  :width 12px
-  :height 12px
+  +star
+  :background-image url("graphics/red_star.jpg")
 
 .blue_star
-  :padding 12px
-  :display inline
-  :background url("graphics/bundeswehr_kreuz.png") center center no-repeat
-  :width 12px
-  :height 12px
+  +star
+  :background-image url("graphics/bundeswehr_kreuz.png")
 
 .landed
-  :padding 20px 60px
-  :display inline
-  :background url("graphics/landed.png") center center no-repeat
-  :width 60px
-  :height 20px
+  +ending
+  :background-image url("graphics/landed.png")
 
 .bailed
-  :padding 20px 20px
-  :display inline
-  :background url("graphics/bailed.png") center center no-repeat
-  :width 20px
-  :height 20px
+  +ending
+  :background-image url("graphics/bailed.png")
 
 .crashlanded
-  :padding 20px 60px
-  :display inline
-  :background url("graphics/crashlanded.png") center center no-repeat
-  :width 60px
-  :height 20px
+  +ending
+  :background-image url("graphics/crashlanded.png")
 
 .killed
-  :padding 20px 20px
-  :display inline
-  :background url("graphics/kia.png") center center no-repeat
-  :width 20px
-  :height 20px
+  +ending
+  :background-image url("graphics/kia.png")
+
 
 .captured
-  :padding 20px 20px
-  :display inline
-  :background url("graphics/captured.png") center center no-repeat
-  :width 20px
-  :height 20px
+  +ending
+  :background-image url("graphics/captured.png")
 
 .in_flight
-  :padding 20px 60px
-  :display inline
-  :background url("graphics/inflight.png") center center no-repeat
-  :width 60px
-  :height 20px
+  +ending
+  :background-image url("graphics/inflight.png")
 
 .disconnected
-  :padding 20px 60px
-  :display inline
-  :background url("graphics/lostconnection.png") center center no-repeat
-  :width 60px
-  :height 20px
-#tooltip
-  :padding 3px
-  :background #f9f9f9
-  :border 1px solid #eee
-  :text-align center
-  :font-size smaller
+  +ending
+  :background-image url("graphics/lostconnection.png")
 
-.tip
-  :border-bottom 1px solid #eee
+.medalist
+  +achievement
+  :background-image url("graphics/medalist.png")
+
+.deaths_good_friend
+  +achievement
+  :background-image url("graphics/deaths_good_friend.png")
+
+.sharpshooter
+  +achievement
+  :background-image url("graphics/sharpshooter.png")
+
+.bomberman
+  +achievement
+  :background-image url("graphics/bomberman.png")
+
+.tooltiped
+  :position relative
+
+.tooltip
+  :display none
+
+.tooltiped:hover .tooltip
+  :display block
+  :position absolute
+  :top 2em
+  :left 2em
+  :width 15em
+  :border 1px solid #000
+  :background-color #fff
+  :color #000
+  :text-align center
+  :z-index 25
 
